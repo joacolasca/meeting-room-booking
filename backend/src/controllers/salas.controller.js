@@ -1,19 +1,29 @@
-function obtenerSalas(req, res) {
-    const salas = [
-        { id: 1, nombre: 'Sala A', capacidad: 10 },
-        { id: 2, nombre: 'Sala B', capacidad: 6 }
-    ];
+const pool = require('../config/db');
 
-    res.json(salas);
+async function obtenerSalas(req, res) {
+    try {
+        const result = await pool.query('SELECT * FROM rooms');
+        res.json(result.rows);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener salas' });
+    }
 }
 
-function crearSala(req, res) {
-    const nuevaSala = req.body;
+async function crearSala(req, res) {
+    const { nombre, capacidad } = req.body;
 
-    res.json({
-        mensaje: 'Sala creada',
-        sala: nuevaSala
-    });
+    try {
+        const result = await pool.query(
+        'INSERT INTO rooms (nombre, capacidad) VALUES ($1, $2) RETURNING *',
+        [nombre, capacidad]
+    );
+
+    res.json(result.rows[0]);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al crear sala' });
+    }
 }
 
 module.exports = {
