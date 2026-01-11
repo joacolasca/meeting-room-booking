@@ -1,13 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middlewares/auth.middleware');
+const roleMiddleware = require('../middlewares/role.middleware');
 
 const {
     obtenerSalas,
     crearSala
-} = require('../controllers/salas.controller');
+} = require('../controllers/rooms.controller');
 
 router.get('/', obtenerSalas);
-router.post('/', authMiddleware, crearSala);
+router.post(
+    '/',
+    authMiddleware,
+    roleMiddleware(['admin']),
+    crearSala
+);
 
 module.exports = router;
