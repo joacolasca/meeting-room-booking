@@ -1,8 +1,13 @@
 const express = require('express');
 const app = express();
 
+const cors = require('cors');
+
 // Middleware para JSON
 app.use(express.json());
+
+// Enable CORS for frontend
+app.use(cors({ origin: 'http://localhost:5173' }));
 
 // Routes
 const usersRoutes = require('./routes/users.routes');
