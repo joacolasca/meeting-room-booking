@@ -10,7 +10,7 @@ async function registerUser(req, res) {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const result = await pool.query(
-            'INSERT INTO users (nombre, email, password) VALUES ($1, $2, $3) RETURNING id, nombre, email',
+            'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email',
             [nombre, email, hashedPassword]
         );
 
@@ -57,8 +57,9 @@ async function loginUser(req, res) {
             token,
             user: {
                 id: user.id,
-                nombre: user.nombre,
-                email: user.email
+                nombre: user.name,
+                email: user.email,
+                role: user.role || 'user'
             }
             });
     } catch (error) {
@@ -67,7 +68,59 @@ async function loginUser(req, res) {
     }
 }
 
+async function obtenerUsuarios(req, res) {
+    try {
+        const result = await pool.query('SELECT id, name, email, role FROM users ORDER BY id');
+        res.json(result.rows);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener usuarios' });
+    }
+}
+
+async function cambiarRol(req, res) {
+    const { id } = req.params;
+    const { role } = req.body;
+
+    if (!['user', 'admin'].includes(role)) {
+        return res.status(400).json({ error: 'Rol invalido' });
+    }
+
+    try {
+        const result = await pool.query(
+            'UPDATE users SET role = $1 WHERE id = $2 RETURNING id, name, email, role',
+            [role, id]
+        );
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Usuario no encontrado' });
+        }
+        res.json(result.rows[0]);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al cambiar rol' });
+    }
+}
+
+async function eliminarUsuario(req, res) {
+    const { id } = req.params;
+
+    if (parseInt(id) === req.user.id) {
+        return res.status(400).json({ error: 'No podes eliminarte a vos mismo' });
+    }
+
+    try {
+        await pool.query('DELETE FROM users WHERE id = $1', [id]);
+        res.json({ mensaje: 'Usuario eliminado' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al eliminar usuario' });
+    }
+}
+
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    obtenerUsuarios,
+    cambiarRol,
+    eliminarUsuario
 };
