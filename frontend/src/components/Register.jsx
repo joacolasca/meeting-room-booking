@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { API } from '../api';
 import { CalendarDays, UserPlus, User, Mail, Lock, AlertCircle, CheckCircle } from 'lucide-react';
 
 function Register() {
@@ -23,7 +24,7 @@ function Register() {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:3001/api/users/register', {
+      const response = await fetch(`${API}/users/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nombre, email, password }),

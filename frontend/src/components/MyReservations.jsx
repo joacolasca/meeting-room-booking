@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { CalendarDays, Clock, DoorOpen, XCircle, AlertCircle, CheckCircle, Ban } from 'lucide-react';
+import { API } from '../api';
 
 const statusConfig = {
   active: {
@@ -34,7 +35,7 @@ function MyReservations() {
 
   const fetchReservations = async () => {
     try {
-      const res = await fetch('http://localhost:3001/api/reservations', { headers });
+      const res = await fetch(`${API}/reservations`, { headers });
       if (res.ok) {
         setReservations(await res.json());
       } else {
@@ -49,7 +50,7 @@ function MyReservations() {
 
   const cancelReservation = async (id) => {
     try {
-      const res = await fetch(`http://localhost:3001/api/reservations/${id}/cancel`, {
+      const res = await fetch(`${API}/reservations/${id}/cancel`, {
         method: 'PUT',
         headers,
       });

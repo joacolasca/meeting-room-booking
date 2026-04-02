@@ -1,6 +1,7 @@
 import { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { API } from '../api';
 import { CalendarDays, Mail, Lock, AlertCircle, CheckCircle, Zap, Shield } from 'lucide-react';
 
 const highlights = [
@@ -30,7 +31,7 @@ function Login() {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:3001/api/users/login', {
+      const response = await fetch(`${API}/users/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),

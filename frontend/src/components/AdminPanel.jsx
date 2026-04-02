@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { API } from '../api';
 import {
   ShieldCheck, DoorOpen, Users, ClipboardList,
   Plus, Pencil, Trash2, X, AlertCircle, CheckCircle,
@@ -46,21 +47,21 @@ function AdminPanel() {
   // Fetch functions
   const fetchRooms = async () => {
     try {
-      const res = await fetch('http://localhost:3001/api/rooms', { headers });
+      const res = await fetch(`${API}/rooms`, { headers });
       if (res.ok) setRooms(await res.json());
     } catch {}
   };
 
   const fetchUsers = async () => {
     try {
-      const res = await fetch('http://localhost:3001/api/users', { headers });
+      const res = await fetch(`${API}/users`, { headers });
       if (res.ok) setUsers(await res.json());
     } catch {}
   };
 
   const fetchReservations = async () => {
     try {
-      const res = await fetch('http://localhost:3001/api/rooms/admin/reservations', { headers });
+      const res = await fetch(`${API}/rooms/admin/reservations`, { headers });
       if (res.ok) setReservations(await res.json());
     } catch {}
   };
@@ -90,8 +91,8 @@ function AdminPanel() {
     try {
       const isEdit = roomModal !== 'create';
       const url = isEdit
-        ? `http://localhost:3001/api/rooms/${roomModal.id}`
-        : 'http://localhost:3001/api/rooms';
+        ? `${API}/rooms/${roomModal.id}`
+        : `${API}/rooms`;
       const res = await fetch(url, {
         method: isEdit ? 'PUT' : 'POST',
         headers: jsonHeaders,
@@ -110,7 +111,7 @@ function AdminPanel() {
 
   const deleteRoom = async (id) => {
     try {
-      await fetch(`http://localhost:3001/api/rooms/${id}`, { method: 'DELETE', headers });
+      await fetch(`${API}/rooms/${id}`, { method: 'DELETE', headers });
       setRooms((prev) => prev.filter((r) => r.id !== id));
       showFeedback('Sala eliminada');
     } catch {}
@@ -119,7 +120,7 @@ function AdminPanel() {
   // User role change
   const changeRole = async (userId, newRole) => {
     try {
-      const res = await fetch(`http://localhost:3001/api/users/${userId}/role`, {
+      const res = await fetch(`${API}/users/${userId}/role`, {
         method: 'PUT',
         headers: jsonHeaders,
         body: JSON.stringify({ role: newRole }),
@@ -133,7 +134,7 @@ function AdminPanel() {
 
   const deleteUser = async (userId) => {
     try {
-      const res = await fetch(`http://localhost:3001/api/users/${userId}`, { method: 'DELETE', headers });
+      const res = await fetch(`${API}/users/${userId}`, { method: 'DELETE', headers });
       if (res.ok) {
         setUsers((prev) => prev.filter((u) => u.id !== userId));
         showFeedback('Usuario eliminado');
@@ -147,7 +148,7 @@ function AdminPanel() {
   // Cancel reservation
   const cancelReservation = async (id) => {
     try {
-      const res = await fetch(`http://localhost:3001/api/rooms/admin/reservations/${id}/cancel`, {
+      const res = await fetch(`${API}/rooms/admin/reservations/${id}/cancel`, {
         method: 'PUT',
         headers,
       });

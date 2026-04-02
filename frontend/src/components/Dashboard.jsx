@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { API } from '../api';
 import { CalendarDays, DoorOpen, Clock, ArrowRight, Users } from 'lucide-react';
 
 const roomImages = [
@@ -28,10 +29,10 @@ function Dashboard() {
     const token = localStorage.getItem('token');
     try {
       const [roomsRes, reservationsRes] = await Promise.all([
-        fetch('http://localhost:3001/api/rooms', {
+        fetch(`${API}/rooms`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch('http://localhost:3001/api/reservations', {
+        fetch(`${API}/reservations`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);

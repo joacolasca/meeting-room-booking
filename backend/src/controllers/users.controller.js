@@ -1,7 +1,7 @@
 const pool = require('../config/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = 'super_secreto_123';
+const JWT_SECRET = process.env.JWT_SECRET || 'super_secreto_123';
 
 async function registerUser(req, res) {
     const { nombre, email, password } = req.body;

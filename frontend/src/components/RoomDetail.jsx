@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { API } from '../api';
 import {
   ArrowLeft, Users, Star, Heart, MapPin, Wifi, Monitor, Coffee,
   Projector, Speaker, CalendarDays, Clock, AlertCircle, CheckCircle, X,
@@ -52,7 +53,7 @@ function RoomDetail() {
 
   const fetchRoom = async () => {
     try {
-      const res = await fetch(`http://localhost:3001/api/rooms/${id}/detail`, { headers });
+      const res = await fetch(`${API}/rooms/${id}/detail`, { headers });
       if (res.ok) {
         setRoom(await res.json());
       } else {
@@ -67,7 +68,7 @@ function RoomDetail() {
 
   const checkFavorite = async () => {
     try {
-      const res = await fetch('http://localhost:3001/api/rooms/favorites/me', { headers });
+      const res = await fetch(`${API}/rooms/favorites/me`, { headers });
       if (res.ok) {
         const favs = await res.json();
         setIsFav(favs.some((f) => (f.room_id || f.id) === parseInt(id)));
@@ -77,7 +78,7 @@ function RoomDetail() {
 
   const toggleFavorite = async () => {
     try {
-      await fetch(`http://localhost:3001/api/rooms/${id}/favorite`, {
+      await fetch(`${API}/rooms/${id}/favorite`, {
         method: isFav ? 'DELETE' : 'POST',
         headers: { ...headers, 'Content-Type': 'application/json' },
       });
@@ -95,7 +96,7 @@ function RoomDetail() {
     setBookingError('');
     setBookingSuccess('');
     try {
-      const res = await fetch('http://localhost:3001/api/reservations', {
+      const res = await fetch(`${API}/reservations`, {
         method: 'POST',
         headers: { ...headers, 'Content-Type': 'application/json' },
         body: JSON.stringify({ room_id: parseInt(id), date: bookingDate, start_time: bookingStart, end_time: bookingEnd }),
@@ -114,7 +115,7 @@ function RoomDetail() {
 
   const submitRating = async (value) => {
     try {
-      await fetch(`http://localhost:3001/api/rooms/${id}/rate`, {
+      await fetch(`${API}/rooms/${id}/rate`, {
         method: 'POST',
         headers: { ...headers, 'Content-Type': 'application/json' },
         body: JSON.stringify({ rating: value }),

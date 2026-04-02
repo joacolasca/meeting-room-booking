@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
 
@@ -6,8 +7,11 @@ const cors = require('cors');
 // Middleware para JSON
 app.use(express.json());
 
-// Enable CORS for frontend
-app.use(cors({ origin: 'http://localhost:5173' }));
+// Enable CORS
+const allowedOrigins = process.env.FRONTEND_URL
+  ? [process.env.FRONTEND_URL, 'http://localhost:5173']
+  : ['http://localhost:5173'];
+app.use(cors({ origin: allowedOrigins }));
 
 // Routes
 const usersRoutes = require('./routes/users.routes');
@@ -24,6 +28,7 @@ app.get('/', (req, res) => {
 });
 
 // Server
-app.listen(3001, () => {
-    console.log('Servidor corriendo en puerto 3001');
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+    console.log(`Servidor corriendo en puerto ${PORT}`);
 });

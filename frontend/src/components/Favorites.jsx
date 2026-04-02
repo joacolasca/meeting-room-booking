@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { API } from '../api';
 import { Heart, HeartOff, DoorOpen, Users, Star, ArrowRight, AlertCircle } from 'lucide-react';
 
 const roomImages = [
@@ -28,7 +29,7 @@ function Favorites() {
 
   const fetchFavorites = async () => {
     try {
-      const res = await fetch('http://localhost:3001/api/rooms/favorites/me', { headers });
+      const res = await fetch(`${API}/rooms/favorites/me`, { headers });
       if (res.ok) {
         const data = await res.json();
         setFavorites(data);
@@ -38,7 +39,7 @@ function Favorites() {
           data.map(async (room) => {
             const id = room.room_id || room.id;
             try {
-              const rRes = await fetch(`http://localhost:3001/api/rooms/${id}/average`, { headers });
+              const rRes = await fetch(`${API}/rooms/${id}/average`, { headers });
               if (rRes.ok) ratingsMap[id] = await rRes.json();
             } catch {
               // ignore
@@ -56,7 +57,7 @@ function Favorites() {
 
   const removeFavorite = async (roomId) => {
     try {
-      await fetch(`http://localhost:3001/api/rooms/${roomId}/favorite`, {
+      await fetch(`${API}/rooms/${roomId}/favorite`, {
         method: 'DELETE',
         headers,
       });

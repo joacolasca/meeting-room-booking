@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { API } from '../api';
 import { DoorOpen, Users, Star, Heart, Search, X, CalendarDays, Clock, AlertCircle, CheckCircle } from 'lucide-react';
 
 const roomImages = [
@@ -41,8 +42,8 @@ function Rooms() {
   const fetchAll = async () => {
     try {
       const [roomsRes, favsRes] = await Promise.all([
-        fetch('http://localhost:3001/api/rooms', { headers }),
-        fetch('http://localhost:3001/api/rooms/favorites/me', { headers }),
+        fetch(`${API}/rooms`, { headers }),
+        fetch(`${API}/rooms/favorites/me`, { headers }),
       ]);
       const roomsData = roomsRes.ok ? await roomsRes.json() : [];
       const favsData = favsRes.ok ? await favsRes.json() : [];
@@ -53,7 +54,7 @@ function Rooms() {
       await Promise.all(
         roomsData.map(async (room) => {
           try {
-            const res = await fetch(`http://localhost:3001/api/rooms/${room.id}/average`, { headers });
+            const res = await fetch(`${API}/rooms/${room.id}/average`, { headers });
             if (res.ok) ratingsMap[room.id] = await res.json();
           } catch {}
         })
@@ -69,7 +70,7 @@ function Rooms() {
   const toggleFavorite = async (roomId) => {
     const isFav = favorites.includes(roomId);
     try {
-      await fetch(`http://localhost:3001/api/rooms/${roomId}/favorite`, {
+      await fetch(`${API}/rooms/${roomId}/favorite`, {
         method: isFav ? 'DELETE' : 'POST',
         headers: { ...headers, 'Content-Type': 'application/json' },
       });
@@ -87,7 +88,7 @@ function Rooms() {
     setBookingError('');
     setBookingSuccess('');
     try {
-      const res = await fetch('http://localhost:3001/api/reservations', {
+      const res = await fetch(`${API}/reservations`, {
         method: 'POST',
         headers: { ...headers, 'Content-Type': 'application/json' },
         body: JSON.stringify({ room_id: bookingRoom.id, date: bookingDate, start_time: bookingStart, end_time: bookingEnd }),
@@ -105,12 +106,12 @@ function Rooms() {
 
   const submitRating = async (roomId, value) => {
     try {
-      await fetch(`http://localhost:3001/api/rooms/${roomId}/rate`, {
+      await fetch(`${API}/rooms/${roomId}/rate`, {
         method: 'POST',
         headers: { ...headers, 'Content-Type': 'application/json' },
         body: JSON.stringify({ rating: value }),
       });
-      const res = await fetch(`http://localhost:3001/api/rooms/${roomId}/average`, { headers });
+      const res = await fetch(`${API}/rooms/${roomId}/average`, { headers });
       if (res.ok) {
         const data = await res.json();
         setRatings((prev) => ({ ...prev, [roomId]: data }));
